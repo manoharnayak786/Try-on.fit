@@ -131,7 +131,7 @@ async def generate_tryon_image(person_image_b64: str, clothing_image_b64: str) -
         """
         
         # Generate the try-on image using OpenAI's image editing
-        result = await openai_client.images.edit(
+        result = openai_client.images.edit(
             image=person_io,
             mask=None,  # Let OpenAI determine what to edit
             prompt=prompt,
