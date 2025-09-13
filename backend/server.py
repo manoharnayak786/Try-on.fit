@@ -153,7 +153,7 @@ async def root():
     return {"message": "TryOn.fit Virtual Try-On Platform API", "version": "1.0.0"}
 
 @api_router.post("/auth/session")
-async def create_session(client_id: str = Form(...)):
+async def create_session(client_id: str):
     """Create SDK session for vendor integration"""
     session_token = str(uuid.uuid4())
     expires_at = datetime.now(timezone.utc).replace(hour=23, minute=59, second=59)
