@@ -152,14 +152,17 @@ async def generate_tryon_image(person_image_b64: str, clothing_image_b64: str) -
 async def root():
     return {"message": "TryOn.fit Virtual Try-On Platform API", "version": "1.0.0"}
 
+class SessionCreate(BaseModel):
+    client_id: str
+
 @api_router.post("/auth/session")
-async def create_session(client_id: str):
+async def create_session(session_data: SessionCreate):
     """Create SDK session for vendor integration"""
     session_token = str(uuid.uuid4())
     expires_at = datetime.now(timezone.utc).replace(hour=23, minute=59, second=59)
     
     session = SDKSession(
-        client_id=client_id,
+        client_id=session_data.client_id,
         session_token=session_token,
         expires_at=expires_at
     )
@@ -169,7 +172,7 @@ async def create_session(client_id: str):
     return {
         "session_token": session_token,
         "expires_at": expires_at.isoformat(),
-        "client_id": client_id
+        "client_id": session_data.client_id
     }
 
 @api_router.post("/tryon/jobs", response_model=TryOnJobResponse)
