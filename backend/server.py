@@ -14,14 +14,14 @@ import base64
 import io
 from PIL import Image
 import asyncio
-from emergentintegrations.llm.openai import OpenAIIntegration
+from openai import OpenAI
 
 ROOT_DIR = Path(__file__).parent
 load_dotenv(ROOT_DIR / '.env')
 
 # Initialize OpenAI with Emergent key
 EMERGENT_API_KEY = os.environ.get('EMERGENT_LLM_KEY', 'sk-emergent-61cC33511Fd3956926')
-openai_client = OpenAIIntegration(api_key=EMERGENT_API_KEY)
+openai_client = OpenAI(api_key=EMERGENT_API_KEY)
 
 # MongoDB connection
 mongo_url = os.environ['MONGO_URL']
