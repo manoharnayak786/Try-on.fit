@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TryOn.fit - Test Interface</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; background: #1a1a2e; color: white; }
+        .container { max-width: 800px; margin: 0 auto; }
+        .upload-area { border: 2px dashed #666; padding: 20px; margin: 10px 0; text-align: center; }
+        .upload-area:hover { border-color: #888; }
+        button { padding: 10px 20px; margin: 10px; background: #4a5568; color: white; border: none; cursor: pointer; }
+        button:hover { background: #2d3748; }
+        button:disabled { background: #666; cursor: not-allowed; }
+        .result { margin: 20px 0; padding: 20px; background: #2d3748; border-radius: 8px; }
+        img { max-width: 200px; max-height: 200px; margin: 10px; border: 1px solid #666; }
+        .status { padding: 10px; margin: 10px 0; background: #4a5568; border-radius: 4px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 TryOn.fit - Direct Test Interface</h1>
+        <p>This is a simple test interface to verify the try-on generation is working.</p>
+        
+        <div class="upload-area" id="personUpload">
+            <p>📸 Upload Person Photo</p>
+            <input type="file" id="personFile" accept="image/*">
+            <div id="personPreview"></div>
+        </div>
+        
+        <div class="upload-area" id="clothingUpload">
+            <p>👕 Upload Clothing Photo</p>
+            <input type="file" id="clothingFile" accept="image/*">
+            <div id="clothingPreview"></div>
+        </div>
+        
+        <button id="generateBtn" disabled onclick="generateTryOn()">🚀 Generate Try-On</button>
+        <button onclick="createTestImages()">🧪 Create Test Images</button>
+        
+        <div class="status" id="status">Ready to test...</div>
+        
+        <div class="result" id="result" style="display:none;">
+            <h3>Results:</h3>
+            <div id="images"></div>
+        </div>
+    </div>
+
+    <script>
+        let personImage = null;
+        let clothingImage = null;
+        
+        // File upload handlers
+        document.getElementById('personFile').addEventListener('change', function(e) {
+            handleFileUpload(e.target.files[0], 'person');
+        });
+        
+        document.getElementById('clothingFile').addEventListener('change', function(e) {
+            handleFileUpload(e.target.files[0], 'clothing');
+        });
+        
+        function handleFileUpload(file, type) {
+            if (!file) return;
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const base64 = e.target.result;
+                
+                if (type === 'person') {
+                    personImage = base64;
+                    document.getElementById('personPreview').innerHTML = `<img src="${base64}" alt="Person">`;
+                } else {
+                    clothingImage = base64;
+                    document.getElementById('clothingPreview').innerHTML = `<img src="${base64}" alt="Clothing">`;
+                }
+                
+                updateGenerateButton();
+            };
+            reader.readAsDataURL(file);
+        }
+        
+        function updateGenerateButton() {
+            const btn = document.getElementById('generateBtn');
+            btn.disabled = !(personImage && clothingImage);
+            btn.textContent = btn.disabled ? '🚀 Generate Try-On (Upload both images)' : '🚀 Generate Try-On';
+        }
+        
+        function createTestImages() {
+            // Create person image
+            const personCanvas = document.createElement('canvas');
+            personCanvas.width = 400;
+            personCanvas.height = 600;
+            const personCtx = personCanvas.getContext('2d');
+            personCtx.fillStyle = 'lightblue';
+            personCtx.fillRect(0, 0, 400, 600);
+            personCtx.fillStyle = 'darkblue';
+            personCtx.fillRect(150, 100, 100, 50); // head
+            personCtx.fillRect(125, 150, 150, 200); // torso
+            personCtx.fillStyle = 'white';
+            personCtx.font = '20px Arial';
+            personCtx.fillText('TEST PERSON', 120, 580);
+            
+            // Create clothing image
+            const clothingCanvas = document.createElement('canvas');
+            clothingCanvas.width = 400;
+            clothingCanvas.height = 400;
+            const clothingCtx = clothingCanvas.getContext('2d');
+            clothingCtx.fillStyle = 'orange';
+            clothingCtx.fillRect(0, 0, 400, 400);
+            clothingCtx.fillStyle = 'darkorange';
+            clothingCtx.fillRect(50, 50, 300, 200); // shirt
+            clothingCtx.fillStyle = 'white';
+            clothingCtx.font = '20px Arial';
+            clothingCtx.fillText('TEST SHIRT', 140, 380);
+            
+            personImage = personCanvas.toDataURL('image/png');
+            clothingImage = clothingCanvas.toDataURL('image/png');
+            
+            document.getElementById('personPreview').innerHTML = `<img src="${personImage}" alt="Test Person">`;
+            document.getElementById('clothingPreview').innerHTML = `<img src="${clothingImage}" alt="Test Clothing">`;
+            
+            updateGenerateButton();
+            document.getElementById('status').textContent = '✅ Test images created successfully!';
+        }
+        
+        async function generateTryOn() {
+            if (!personImage || !clothingImage) {
+                alert('Please upload both images first!');
+                return;
+            }
+            
+            const btn = document.getElementById('generateBtn');
+            const status = document.getElementById('status');
+            
+            btn.disabled = true;
+            btn.textContent = '⏳ Generating...';
+            status.textContent = '🔄 Sending request to backend...';
+            
+            try {
+                const response = await fetch('/api/tryon/jobs', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        tenant_id: 'test_interface',
+                        person_image: personImage,
+                        clothing_image: clothingImage,
+                        options: {
+                            profile: 'speed',
+                            maxRes: 1024,
+                            watermark: false
+                        }
+                    })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const result = await response.json();
+                
+                status.textContent = `✅ Success! Job ID: ${result.job_id}, Status: ${result.status}, Latency: ${result.latency_ms}ms`;
+                
+                // Display results
+                if (result.result_base64) {
+                    const resultDiv = document.getElementById('result');
+                    const imagesDiv = document.getElementById('images');
+                    
+                    imagesDiv.innerHTML = `
+                        <div style="display: flex; flex-wrap: wrap; gap: 10px;">
+                            <div>
+                                <h4>Original Person</h4>
+                                <img src="${personImage}" alt="Original Person">
+                            </div>
+                            <div>
+                                <h4>Try-On Result ✨</h4>
+                                <img src="data:image/png;base64,${result.result_base64}" alt="Try-On Result" style="border: 3px solid lime;">
+                            </div>
+                            <div>
+                                <h4>Clothing Item</h4>
+                                <img src="${clothingImage}" alt="Clothing Item">
+                            </div>
+                        </div>
+                    `;
+                    
+                    resultDiv.style.display = 'block';
+                } else {
+                    status.textContent += ' (No result image received)';
+                }
+                
+            } catch (error) {
+                status.textContent = `❌ Error: ${error.message}`;
+                console.error('Generation error:', error);
+            } finally {
+                btn.disabled = false;
+                btn.textContent = '🚀 Generate Try-On';
+            }
+        }
+    </script>
+</body>
+</html>
