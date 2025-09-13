@@ -300,6 +300,10 @@ async def import_catalog(catalog_data: Dict[str, Any]):
 async def get_catalog_products(tenant_id: str = "default_tenant"):
     """Get catalog products for a tenant"""
     products = await db.product_catalog.find({"tenant_id": tenant_id}).to_list(100)
+    # Convert ObjectId to string to make it JSON serializable
+    for product in products:
+        if '_id' in product:
+            product['_id'] = str(product['_id'])
     return {"products": products}
 
 @api_router.post("/tenants")
