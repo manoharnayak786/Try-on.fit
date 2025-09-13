@@ -324,11 +324,7 @@ const TryOnApp = () => {
 
       <div className="max-w-7xl mx-auto px-6 py-8">
         {!generatedImage ? (
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            className="text-center mb-12"
-          >
+          <div className="text-center mb-12">
             <h1 className="text-4xl font-bold text-white mb-4">
               Virtual Try-On Demo
             </h1>
@@ -337,14 +333,9 @@ const TryOnApp = () => {
             </p>
 
             {/* Upload Section */}
-            <div className="grid md:grid-cols-2 gap-8 mb-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
               {/* Person Image Upload */}
-              <motion.div
-                initial={{ opacity: 0, x: -50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.2 }}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-8"
-              >
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
                 <div className="flex items-center justify-center mb-4">
                   <User className="w-8 h-8 text-purple-400 mr-2" />
                   <h3 className="text-xl font-semibold text-white">Person Photo</h3>
@@ -372,15 +363,10 @@ const TryOnApp = () => {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
 
               {/* Clothing Image Upload */}
-              <motion.div
-                initial={{ opacity: 0, x: 50 }}
-                animate={{ opacity: 1, x: 0 }}
-                transition={{ delay: 0.4 }}
-                className="bg-white/10 backdrop-blur-sm rounded-2xl p-8"
-              >
+              <div className="bg-white/10 backdrop-blur-sm rounded-2xl p-8">
                 <div className="flex items-center justify-center mb-4">
                   <Shirt className="w-8 h-8 text-blue-400 mr-2" />
                   <h3 className="text-xl font-semibold text-white">Clothing Item</h3>
@@ -408,15 +394,11 @@ const TryOnApp = () => {
                     </div>
                   )}
                 </div>
-              </motion.div>
+              </div>
             </div>
 
             {/* Generate Button */}
-            <motion.div
-              initial={{ opacity: 0, y: 20 }}
-              animate={{ opacity: 1, y: 0 }}
-              transition={{ delay: 0.6 }}
-            >
+            <div className="mb-8">
               <button
                 onClick={generateTryOn}
                 disabled={!personImage || !clothingImage || isGenerating}
@@ -438,33 +420,21 @@ const TryOnApp = () => {
                   </div>
                 )}
               </button>
-            </motion.div>
+            </div>
 
             {/* Progress/Error Messages */}
-            <AnimatePresence>
-              {generationProgress && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-6 text-purple-300 text-lg"
-                >
-                  {generationProgress}
-                </motion.div>
-              )}
-              
-              {error && (
-                <motion.div
-                  initial={{ opacity: 0, y: 10 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  exit={{ opacity: 0, y: -10 }}
-                  className="mt-6 bg-red-500/20 border border-red-500 rounded-lg p-4 text-red-300"
-                >
-                  {error}
-                </motion.div>
-              )}
-            </AnimatePresence>
-          </motion.div>
+            {generationProgress && (
+              <div className="mt-6 text-purple-300 text-lg">
+                {generationProgress}
+              </div>
+            )}
+            
+            {error && (
+              <div className="mt-6 bg-red-500/20 border border-red-500 rounded-lg p-4 text-red-300">
+                {error}
+              </div>
+            )}
+          </div>
         ) : (
           /* Results Section */
           <motion.div
