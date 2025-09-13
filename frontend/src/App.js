@@ -131,11 +131,11 @@ const LandingPage = () => {
             <div className="text-blue-400">TryOn<span className="text-white">.</span><span className="text-yellow-400">init</span><span className="text-white">({"{"}</span></div>
             <div className="ml-4 text-white">clientId<span className="text-gray-400">:</span> <span className="text-green-400">&apos;your-client-id&apos;</span><span className="text-white">,</span></div>
             <div className="ml-4 text-white">env<span className="text-gray-400">:</span> <span className="text-green-400">&apos;production&apos;</span></div>
-            <div className="text-white">{`});`}</div>
+            <div className="text-white">{"});"}</div>
             <div className="mt-4 text-green-400">// Open try-on for any product</div>
-            <div className="text-blue-400">TryOn<span className="text-white">.</span><span className="text-yellow-400">open</span><span className="text-white">({`{`}</span></div>
+            <div className="text-blue-400">TryOn<span className="text-white">.</span><span className="text-yellow-400">open</span><span className="text-white">({"{"}</span></div>
             <div className="ml-4 text-white">productId<span className="text-gray-400">:</span> <span className="text-green-400">&apos;SKU_1234&apos;</span></div>
-            <div className="text-white">{`});`}</div>
+            <div className="text-white">{"});"}</div>
           </div>
         </div>
       </section>
